@@ -1,0 +1,8 @@
+{
+  "name": "Spirit Genesis: Bio-Molecular Discovery Engine",
+  "description": "A high-performance scientific dashboard for protein folding structural insights and therapeutic discovery in oncology and mental health, powered by Gemini-3-pro and Spirit Intelligent multi-agent loops.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
