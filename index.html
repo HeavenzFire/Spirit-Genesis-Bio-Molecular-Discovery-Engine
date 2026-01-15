@@ -10,21 +10,11 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #020617;
+            background-color: #030712;
             color: #f8fafc;
             overflow-x: hidden;
         }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .glass {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -34,27 +24,6 @@
         ::-webkit-scrollbar-thumb {
             background: rgba(99, 102, 241, 0.2);
             border-radius: 2px;
-        }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-        .animate-pulse-slow {
-            animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-        .animate-slideIn {
-            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

@@ -7,86 +7,78 @@ interface Props {
 }
 
 const ProteinVisualizer: React.FC<Props> = ({ protein }) => {
-  const plddt = protein.plddt || [80, 85, 90, 88, 70, 95, 92, 84, 86, 89];
+  const plddt = protein.plddt || [92, 94, 91, 88, 95, 96, 92, 85, 89, 93];
   
   return (
-    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-black/40 rounded-3xl border border-white/5 ring-1 ring-white/5 shadow-2xl">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#312e8133_0%,_transparent_70%)]" />
-      
-      {/* Scanning Line Effect */}
-      <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-        <div className="w-full h-[3px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_20px_#22d3ee] animate-scan-y" />
+    <div className="relative w-full h-[500px] flex items-center justify-center bg-black/40 rounded-[3rem] border border-white/5 shadow-inner overflow-hidden">
+      <div className="absolute top-10 left-12">
+        <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.4em] italic mb-2">Molecular Geometry</h3>
+        <p className="text-[10px] font-mono text-slate-700 uppercase">LATTICE_SEED: {protein.id}</p>
       </div>
+      
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1e1b4b_0%,_transparent_70%)] opacity-30 pointer-events-none" />
 
-      <div className="absolute top-6 left-8 z-30">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
-          <h3 className="text-sm font-black text-cyan-400 uppercase tracking-widest italic">Neural Projection Lattice</h3>
-        </div>
-        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">ID: {protein.id} // RESOLUTION: HI-RES // STATE: STABLE</p>
-      </div>
-      
-      <svg width="100%" height="100%" viewBox="0 0 400 400" className="opacity-90 drop-shadow-[0_0_30px_rgba(99,102,241,0.2)]">
+      <svg width="90%" height="90%" viewBox="0 0 400 400" className="drop-shadow-[0_0_40px_rgba(99,102,241,0.2)]">
         <defs>
-          <filter id="glow-v">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <filter id="lattice-glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <linearGradient id="protGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22d3ee" />
+            <stop offset="50%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#818cf8" />
+          </linearGradient>
+          <pattern id="dotPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+             <circle cx="2" cy="2" r="0.5" fill="#1e293b" />
+          </pattern>
         </defs>
-        
+
+        <rect width="100%" height="100%" fill="url(#dotPattern)" />
+
+        {/* Structural Orbital Path */}
         <path
-          d={`M 50,200 C ${plddt.map((p, i) => `${80 + i * 30},${200 + (Math.sin(i * 1.5 + (Date.now() / 1000)) * p * 0.4)}`).join(' ')}`}
+          d={`M 40,200 C ${plddt.map((p, i) => `${80 + i * 32},${200 + (Math.sin(i * 1.8 + (Date.now() / 250)) * p * 0.45)}`).join(' ')}`}
           fill="none"
-          stroke="url(#proteinGrad-v)"
+          stroke="url(#protGrad)"
           strokeWidth="10"
           strokeLinecap="round"
-          filter="url(#glow-v)"
-          className="transition-all duration-500 ease-in-out"
+          strokeOpacity="0.9"
+          className="transition-all duration-100 ease-linear"
+          filter="url(#lattice-glow)"
         />
-        
-        <linearGradient id="proteinGrad-v" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="50%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#d946ef" />
-        </linearGradient>
 
-        {protein.bindingSites.map((site, i) => (
-          <g key={i} transform={`translate(${100 + site.residueIndex * 24}, ${200 + (Math.sin(site.residueIndex * 1.5) * 35)})`}>
-            <circle r="10" fill="#f43f5e" className="animate-ping opacity-20" />
-            <circle r="4" fill="#f43f5e" className="shadow-[0_0_10px_#f43f5e]" />
-            <text y="-18" fontSize="10" fill="#f43f5e" textAnchor="middle" className="font-black italic uppercase tracking-tighter shadow-sm">{site.label}</text>
-          </g>
-        ))}
+        {/* Binding Affinity Hotspots */}
+        {protein.bindingSites.map((site, i) => {
+          const x = 100 + site.residueIndex * 24;
+          const y = 200 + (Math.sin(site.residueIndex * 1.8 + (Date.now() / 250)) * plddt[site.residueIndex % 10] * 0.45);
+          return (
+            <g key={i} transform={`translate(${x}, ${y})`}>
+              <circle r="12" fill="#f43f5e" fillOpacity="0.1" className="animate-ping" />
+              <circle r="6" fill="#f43f5e" className="shadow-[0_0_15px_#f43f5e]" />
+              <g transform="translate(0, -25)">
+                 <rect x="-35" y="-12" width="70" height="16" rx="4" fill="black" fillOpacity="0.8" stroke="#f43f5e" strokeWidth="0.5" />
+                 <text fontSize="8" fill="#f43f5e" textAnchor="middle" y="-1" className="font-black uppercase tracking-tighter">{site.label}</text>
+              </g>
+              <line y1="0" y2="-13" stroke="#f43f5e" strokeWidth="0.5" strokeDasharray="2 1" />
+            </g>
+          );
+        })}
+
+        {/* Data Accents */}
+        <circle cx="40" cy="200" r="4" fill="#22d3ee" />
+        <circle cx="360" cy="200" r="4" fill="#818cf8" />
       </svg>
 
-      <div className="absolute bottom-6 right-8 text-right z-30">
-        <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Global Confidence</div>
-        <div className="text-4xl font-black text-indigo-400 italic font-mono tracking-tighter">{(protein.confidence * 100).toFixed(1)}%</div>
+      <div className="absolute bottom-10 right-12 text-right">
+        <div className="text-[11px] text-slate-700 uppercase font-black tracking-[0.3em] mb-2">Refinement Confidence</div>
+        <div className="text-6xl font-black text-indigo-400 font-mono italic tracking-tighter leading-none">
+          {(protein.confidence * 100).toFixed(2)}%
+        </div>
       </div>
-
-      <div className="absolute bottom-6 left-8 flex gap-2 items-end h-16 z-30 group">
-        {plddt.map((p, i) => (
-          <div 
-            key={i} 
-            style={{ height: `${p}%` }}
-            className={`w-2 rounded-t-sm transition-all duration-700 hover:w-3 ${p > 90 ? 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]' : p > 80 ? 'bg-indigo-500 shadow-[0_0_5px_#6366f1]' : 'bg-slate-800'}`}
-          />
-        ))}
-        <div className="text-[9px] text-slate-500 font-mono ml-4 uppercase rotate-90 origin-left tracking-[0.3em] font-bold">Lattice_Confidence</div>
-      </div>
-      
-      <style>{`
-        @keyframes scan-y {
-          0% { transform: translateY(-200px); }
-          100% { transform: translateY(200px); }
-        }
-        .animate-scan-y {
-          animation: scan-y 4s linear infinite;
-        }
-      `}</style>
     </div>
   );
 };
