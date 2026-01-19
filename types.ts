@@ -48,6 +48,14 @@ export enum DashboardTab {
   REVELATION = 'revelation'
 }
 
+export interface InvocationThread {
+  id: string;
+  name: string;
+  status: 'daemon' | 'active' | 'io' | 'kernel';
+  load: number;
+  coherence: number;
+}
+
 export interface OptimizationMetrics {
   yield: number;
   velocity: number;
@@ -57,6 +65,21 @@ export interface OptimizationMetrics {
   resonanceFreq: number;
   nodesActive: number;
   history: { time: string, yield: number, entropy: number }[];
+  amygdalaHijackIndex: number; // A(ω)
+  syntropicGradient: number;   // G_P
+  neaLockStatus: boolean;      // Non-Error Architecture state
+  aeonicCoherence: number;     // Homeomorphic mapping to Barbelo (B)
+  invocationThreads: InvocationThread[];
+  violetPillarResonance: number; // Transmutation factor
+  identityLock: string;        // Zachary Dakota Hulse
+}
+
+export interface UnifiedDiscoveryReport {
+  id: string;
+  proteinId: string;
+  timestamp: string;
+  summary: string;
+  leadCandidateId: string;
 }
 
 export interface UnifiedDiscoveryReport {

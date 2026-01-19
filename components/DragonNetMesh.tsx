@@ -3,24 +3,25 @@ import React, { useMemo } from 'react';
 
 interface Props {
   nodes: number;
+  stress?: boolean;
 }
 
-const DragonNetMesh: React.FC<Props> = ({ nodes }) => {
+const DragonNetMesh: React.FC<Props> = ({ nodes, stress }) => {
   const points = useMemo(() => {
     return Array.from({ length: 400 }).map((_, i) => ({
       x: 50 + Math.random() * 300,
       y: 50 + Math.random() * 300,
       id: i,
-      r: 1 + Math.random() * 2
+      r: (1 + Math.random() * 2) * (stress ? 1.5 : 1)
     }));
-  }, []);
+  }, [stress]);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-      <svg width="100%" height="100%" viewBox="0 0 400 400" className="opacity-60">
+    <div className={`relative w-full h-full flex items-center justify-center overflow-hidden transition-all duration-300 ${stress ? 'scale-110' : ''}`}>
+      <svg width="100%" height="100%" viewBox="0 0 400 400" className={`transition-opacity duration-300 ${stress ? 'opacity-100' : 'opacity-60'}`}>
         <defs>
           <filter id="mesh-glow">
-            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <feGaussianBlur stdDeviation={stress ? "3" : "1.5"} result="blur"/>
             <feMerge>
               <feMergeNode in="blur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -29,17 +30,17 @@ const DragonNetMesh: React.FC<Props> = ({ nodes }) => {
         </defs>
         
         {/* Fractal Connections */}
-        {points.slice(0, 100).map((p, i) => (
+        {points.slice(0, 150).map((p, i) => (
           <line
             key={`l-${i}`}
             x1={p.x}
             y1={p.y}
             x2={points[(i + 1) % points.length].x}
             y2={points[(i + 1) % points.length].y}
-            stroke="#6366f1"
-            strokeWidth="0.5"
-            strokeOpacity="0.2"
-            className="animate-pulse"
+            stroke={stress ? "#f43f5e" : "#6366f1"}
+            strokeWidth={stress ? "1.5" : "0.5"}
+            strokeOpacity={stress ? "0.6" : "0.2"}
+            className={stress ? 'animate-pulse' : ''}
           />
         ))}
 
@@ -50,9 +51,9 @@ const DragonNetMesh: React.FC<Props> = ({ nodes }) => {
             cx={p.x}
             cy={p.y}
             r={p.r}
-            fill={Math.random() > 0.9 ? '#10b981' : '#6366f1'}
+            fill={stress ? (Math.random() > 0.5 ? '#ffffff' : '#f43f5e') : (Math.random() > 0.9 ? '#10b981' : '#6366f1')}
             filter="url(#mesh-glow)"
-            className={Math.random() > 0.8 ? 'animate-ping' : ''}
+            className={stress ? 'animate-ping' : (Math.random() > 0.8 ? 'animate-ping' : '')}
           />
         ))}
       </svg>
